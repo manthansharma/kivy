@@ -1353,6 +1353,7 @@ class KVCompiler(object):
 
     def compile_directives(self, directives):
         includes = set()
+        tab = self.tab
         ret = ['# directives']
 
         for directive in directives:
@@ -1365,7 +1366,16 @@ class KVCompiler(object):
                 if len(package) != 2:
                     raise Exception('Bad import format "{}"'.format(cmd))
                 alias, package = package
-                ret.append('import {} as {}'.format(package, alias))
+                pkgs = package.rsplit('.', 1)
+                if len(pkgs) == 1:
+                    ret.append('import {} as {}'.format(package, alias))
+                else:
+                    ret.extend([
+                        'try:',
+                        '{}import {} as {}'.format(tab, package, alias),
+                        'except ImportError:',
+                        '{}from {} import {} as {}'.format(tab, pkgs[0], pkgs[1], alias)
+                    ])
 
             elif cmd[:4] == 'set ':
                 name, value = cmd[4:].strip().split(' ', 1)
