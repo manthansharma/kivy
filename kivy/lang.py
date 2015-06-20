@@ -1724,7 +1724,7 @@ class BuilderBase(object):
                 'Cannot dynamically compile and load cython code from string.')
 
         code = '\n'.join(lines)
-        glbls = {}
+        glbls = {'__file__': '<string>'}
         exec(code, glbls)
 
         self.compiled_rules.extend(
@@ -1736,6 +1736,9 @@ class BuilderBase(object):
         '''Insert a file into the language builder and return the root widget
         (if defined) of the kv file.
 
+        Compiled files are imported as kivy.lang.compiled_mod_filename, where
+        filename is the full path to `filename`.
+
         :parameters:
             `rulesonly`: bool, defaults to False
                 If True, the Builder will raise an exception if you have a root
@@ -1743,6 +1746,7 @@ class BuilderBase(object):
         '''
 
         # try to see if there is a compiled version of the kv first
+<<<<<<< HEAD
         pyfn = filename.replace(".kv", "_kv.py")
         pyfn = resource_find(pyfn) or pyfn
         if exists(pyfn):
@@ -1751,6 +1755,55 @@ class BuilderBase(object):
                 "kivy.lang.{}".format(basename(pyfn.replace(".", "__"))),
                 pyfn)
             return mod.get_root()
+=======
+        base_name = splitext(filename)[0]
+        is_source = filename.endswith('.kv')
+        pyfn = base_name + ".kvc"  # python compiled
+        cyfn = base_name + ".pyd"  # cython compiled
+        fn = resource_find(cyfn) or cyfn
+        if not exists(fn):
+            fn = resource_find(pyfn) or pyfn
+
+        if exists(fn):  # cython or python exists
+            if fn in self.files:
+                Logger.warning(
+                    'Lang: The file {} is already loaded; '
+                    'you might get unwanted behavior.'.format(fn))
+
+            Logger.info('Builder: load file {} (compiled, py)'.format(fn))
+            # get the file params required to import it
+            for desc in imp.get_suffixes():
+                if (fn[-3:] == 'kvc' and desc[0] == '.py' or
+                    fn[-3:] == 'pyd' and desc[0] == '.pyd'):
+                    break
+
+            try:
+                # does the source file exist, or did we get a compiled file?
+                if is_source:
+                    with codecs.open(filename) as fd:  # get the source hash
+                        h = hashlib.sha256(fd.read()).hexdigest()
+
+                with codecs.open(fn, desc[1]) as fh:
+                    mod = imp.load_module(
+                        'kivy.lang.compiled_mod_{}'.format(base_name), fh, fn,
+                        desc)
+
+                if is_source:  # does the source hash match the file's?
+                    if mod.__source_hash__ != h:
+                        raise Exception(
+                            'Compiled file "{}" is out of date with the '
+                            'source file "{}"'.format(fn, filename))
+
+                self.compiled_rules.extend(
+                    [(s, r, prev, filename) for (s, r, prev) in mod.rules])
+                self.files.append(filename)
+                self._clear_matchcache()
+                return mod.get_root()
+            except Exception as e:
+                Logger.exception(
+                    'Failed to import {}, falling back to parser'.format(fn))
+                Logger.exception(str(e))
+>>>>>>> Fixes, docs updates.
 
         filename = resource_find(filename) or filename
         if __debug__:
