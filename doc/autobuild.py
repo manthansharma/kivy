@@ -16,6 +16,8 @@ ignore_list = (
     'kivy.uix.recycleview.__init__',
     'kivy.setupconfig',
     'kivy.version'
+    'kivy.lib.osc',
+    'kivy.lang._compiled_mod'
 )
 
 import os
@@ -121,8 +123,9 @@ api_modules = []
 for name, module, filename in l:
     if name in ignore_list:
         continue
-    if not any([name.startswith(x) for x in ignore_list]):
-        api_modules.append(name)
+    if any([name.startswith(x) for x in ignore_list]):
+        continue
+    api_modules.append(name)
     if filename == '__init__':
         packages.append(name)
     else:

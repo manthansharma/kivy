@@ -289,7 +289,9 @@ TODO:
 #. Add docs to binding in compiled code.
 '''
 
-__all__ = []
+__all__ = (
+    'KVCompiler', 'LazyFmt', 'LazyEval', 'LazyString', 'push_empty',
+    'break_multiline_code', 'safe_comment', 'make_tuple', 'RuleContext')
 
 __version__ = '0.1'
 
@@ -2262,12 +2264,9 @@ class KVCompiler(object):
             [c[1] for c in template.ctx.sourcecode[minline:maxline + 1]])
         return ["__Builder.load_string('''", code, "''')"]
 
-<<<<<<< HEAD
-    def compile(self, parser, rule_opts={}, **kwargs):
-=======
+
     def compile(self, parser, file_hash, rule_opts={}, **kwargs):
         rule_opts = {k.lower(): v for k, v in rule_opts.items()}
->>>>>>> Docs and fixes.
         cython = kwargs.get('cython', KVCompiler.cython)
         for opts in rule_opts.values():
             if cython:
