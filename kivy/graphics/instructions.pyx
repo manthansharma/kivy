@@ -63,8 +63,6 @@ cdef class Instruction(ObjectWithUid):
 
     cdef int apply(self) except -1:
         return 0
-    cdef void apply(self):
-        pass
 
     IF DEBUG:
         cpdef flag_update(self, int do_parent=1, list _instrs=None):

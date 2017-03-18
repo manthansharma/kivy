@@ -2317,31 +2317,18 @@ class KVCompiler(object):
                 base_types[o_type] = None
         otype = make_tuple(['__' + b for b in base_types.keys()])
 
-<<<<<<< HEAD
-=======
+
         ver = '__version__ = "{}"'.format(__version__)
         kver = '__kivy_version__ = "{}"'.format(kivy.__version__)
         source = '__source_file__ = r"{}"'.format(abspath(parser.filename))
         src_hash = '__source_hash__ = b"{}"'.format(file_hash)
 
         lines = [ver, kver, source, src_hash]
->>>>>>> Fixes, docs updates.
         if cython:
             lines = [cyheader_imports, cyheader_globals]
         else:
-<<<<<<< HEAD
             lines = [pyheader_imports, pyheader_globals]
-        lines += [rebind_callback_str.format('{}', otype), '']
-=======
-            lines += [pyheader_imports, pyheader_globals]
-<<<<<<< HEAD
-        lines += [
-            rebind_callback_str.format('{}', otype), '',
-            return_args_str, '']
->>>>>>> Compiler docs, fixes, clean namespace.
-=======
         lines += [rebind_callback_str.format(otype), '', return_args_str, '']
->>>>>>> Fixes, docs updates.
 
         lines.extend(self.compile_directives(parser.directives))
 
@@ -2401,11 +2388,7 @@ class KVCompiler(object):
         else:
             lines.extend(['', ''])
         lines.append(root_code)
-<<<<<<< HEAD
-        lines[1] = lines[1].format(rule_uid)
-=======
         lines[5] = lines[5].format(rule_uid)
->>>>>>> Fixes, docs updates.
 
         for name, cls, template in parser.templates:
             lines.extend(['', ''])
