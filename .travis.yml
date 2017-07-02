@@ -38,7 +38,22 @@ install:
         yes | sudo add-apt-repository ppa:zoogie/sdl2-snapshots;
         yes | sudo add-apt-repository ppa:gstreamer-developers/ppa;
         sudo apt-get update;
-        sudo apt-get -y install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev;
+        sudo apt-get -y install automake autoconf mercurial;
+
+        function clone_install {
+            hg clone https://hg.libsdl.org/$1;
+            cd $1;
+            ./autogen.sh;
+            mkdir build && cd "$_";
+            ../configure;
+            make;
+            sudo make install;
+        }
+
+        clone_install SDL;
+        clone_install SDL_image;
+        clone_install SDL_ttf;
+        clone_install SDL_mixer;
         sudo apt-get -y install libgstreamer1.0-dev gstreamer1.0-alsa gstreamer1.0-plugins-base;
         sudo apt-get -y install python-dev libsmpeg-dev libswscale-dev libavformat-dev libavcodec-dev libjpeg-dev libtiff4-dev libX11-dev libmtdev-dev;
         sudo apt-get -y install python-setuptools build-essential libgl1-mesa-dev libgles2-mesa-dev;
