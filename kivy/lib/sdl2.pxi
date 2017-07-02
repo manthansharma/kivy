@@ -915,3 +915,7 @@ cdef extern from "SDL_mixer.h":
     cdef Mix_Chunk *  Mix_GetChunk(int channel)
     cdef void  Mix_CloseAudio()
     cdef char * Mix_GetError()
+
+cdef extern from "SDL_video.h":
+    cdef int SDL_SetWindowOpacity(SDL_Window * window, float opacity)
+    cdef int SDL_GetWindowOpacity(SDL_Window * window, float* opacity)
