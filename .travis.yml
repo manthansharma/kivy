@@ -38,7 +38,6 @@ install:
         yes | sudo add-apt-repository ppa:zoogie/sdl2-snapshots;
         yes | sudo add-apt-repository ppa:gstreamer-developers/ppa;
         sudo apt-get update;
-        sudo apt-get -y install automake autoconf mercurial;
 
         function clone_install {
             hg clone https://hg.libsdl.org/$1;
